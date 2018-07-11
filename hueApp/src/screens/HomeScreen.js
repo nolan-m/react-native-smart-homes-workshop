@@ -14,6 +14,7 @@ export class HomeScreen extends Component {
 
   componentDidMount(){
     //TODO: Check initial setup by calling action on the store
+    this.props.store.checkInitialSetup()
   }
 
 
@@ -24,11 +25,11 @@ export class HomeScreen extends Component {
     return (
       <View>
         <Header title="Philips Hue bridge list"/>
-        <FlatList 
+        <FlatList
           data={this.props.store.bridgeList}
-          renderItem={({item}) => 
-            <BridgeComponent 
-              data={item} 
+          renderItem={({item}) =>
+            <BridgeComponent
+              data={item}
               bridgeAuthenticate={() => this.props.store.connectToBridge(item)}/>
             }
           keyExtractor={this._keyExctractor}
@@ -40,9 +41,9 @@ export class HomeScreen extends Component {
   render() {
     return (
       <View style={SCREEN}>
-        { this.props.store.isLoading ? 
+        { this.props.store.isLoading ?
           <LoaderComponent title="Looking for a bridge" /> :
-          this.getBridgeList() 
+          this.getBridgeList()
         }
       </View>
     )

@@ -3,7 +3,7 @@ import { navigate } from '../services/navigationService';
 import { AsyncStorage } from 'react-native';
 
 export default class hueStore {
-  
+
   @observable
   bridgeList = []
 
@@ -29,7 +29,7 @@ export default class hueStore {
       .reduce(data => data)
   }
 
-  @computed 
+  @computed
   get activeLightBulb(){
     return this.lightsList
       .filter(light => light.id === this.activeLightBulbId)
@@ -48,37 +48,59 @@ export default class hueStore {
     // TODO: retrieve "bridgeIp" and "userName" from AsyncStorage
     // TODO: If there are no bridge Ip or username - seacrch for bridge (this.searchForBridge) if there are set up observables and navigate to "Lights"
     // TODO: Bonus: check if bridge ip is not valid anymore
+
+    let bridgeIp = await AsyncStorage.getItem('bridgeIp')
+    let userName = await AsyncStorage.getItem('userName')
+
+    if (!bridgeIp && !userName) {
+      await this.searchForBridge()
+    } else {
+      this.activeBridgeIP = bridgeIp
+      this.userName = userName
+      navigate('Lights');
+    }
   }
 
   @action
   async searchForBridge(){
-    /* TODO: 
-     use Philips Hue UPNP discovery service to search for bridges (https://www.meethue.com/api/nupnp), 
+    /* TODO:
+     use Philips Hue UPNP discovery service to search for bridges (https://www.meethue.com/api/nupnp),
      update "bridgeList" observable
      set loading as false
     */
 
     const blob = await fetch(`https://www.meethue.com/api/nupnp`);
     const response = await blob.json();
-    
+
     this.bridgeList = response
     this.isLoading = false;
   }
 
-  @action 
+  @action
   async connectToBridge(bridge){
     /*TODO: Store bridge credentials in AsyncStorage ("bridgeIp")
      - set activeBridgeIP observable on the store
     */
-  
+
+    console.log(bridge)
+
+    // AsyncStorage.setItem('bridgeIp', bridge)
+    // this.activeBridgeIP = bridge
+
     // TODO: call "getHueUserName" on the store
+    // await this.getHueUserName()
   }
 
   @action
   async getHueUserName() {
-    //TODO: Get Hue user name 
+    //TODO: Get Hue user name
+
     //TODO: Set username into AsyncStorage and store ("this.userName")
+    AsyncStorage.setItem('userName', userName)
+    this.userName = userName
+
     //TODO: Navigate to Lights screen
+    // navigate('Lights');
   }
 
   @action
